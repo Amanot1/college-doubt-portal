@@ -1,310 +1,335 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>College Doubt Portal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      font-family: "Poppins", Arial, sans-serif;
-      background: #f5f6fa;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-
-    .container {
-      background: white;
-      padding: 20px;
-      width: 90%;
-      max-width: 400px;
-      margin: 50px auto;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #ccc;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    textarea {
-      resize: none;
-      height: 100px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background: #3498db;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 500;
-    }
-
-    button:hover { background: #2980b9; }
-
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #4CAF50;
-      color: white;
-      padding: 14px 22px;
-      border-radius: 6px;
-      display: none;
-      font-size: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      z-index: 2000;
-    }
-
-    .hidden { display: none; }
-
-    .post {
-      background: #e8f0fe;
-      padding: 10px;
-      border-radius: 10px;
-      margin: 10px 0;
-      text-align: left;
-      word-wrap: break-word;
-    }
-
-    .admin-btn {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: #2ecc71;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 16px;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 500;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-      z-index: 2001;
-    }
-
-    .admin-btn:active {
-      transform: scale(0.95);
-    }
-
-    .admin-panel {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: white;
-      width: 90%;
-      max-width: 450px;
-      border-radius: 12px;
-      box-shadow: 0 0 10px #555;
-      padding: 20px;
-      display: none;
-      z-index: 2001;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    .admin-panel h3 { margin-top: 0; }
-
-    .close-btn {
-      background: #e74c3c;
-      margin-top: 10px;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      z-index: 2000;
-    }
-
-    img {
-      margin-top: 5px;
-      width: 100%;
-      border-radius: 8px;
-    }
-
-    @media (max-width: 600px) {
-      .container { 
-        margin: 20px auto; 
-        padding: 16px; 
-        width: 95%;
-      }
-      button, input, textarea { font-size: 15px; }
-      .admin-btn { font-size: 13px; padding: 8px 12px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>College Doubt Portal (Firebase)</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial, Helvetica, sans-serif;margin:0;background:#f5f6fa;color:#222}
+  header{padding:12px 16px;background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;justify-content:space-between}
+  header h1{font-size:18px;margin:0}
+  .wrap{padding:18px;max-width:900px;margin:0 auto}
+  .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.04);margin-bottom:16px}
+  input,textarea,button{font-size:15px}
+  input,textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #dcdcdc;border-radius:8px}
+  textarea{min-height:90px;resize:vertical}
+  button{background:#3498db;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
+  .muted{color:#666;font-size:14px}
+  .flex{display:flex;gap:8px;align-items:center}
+  .admin-btn{background:#2ecc71;color:#fff;padding:8px 12px;border-radius:8px;border:none}
+  .hidden{display:none}
+  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#4caf50;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:9999}
+  .post{background:#eef6ff;padding:12px;border-radius:10px;margin-bottom:10px;word-wrap:break-word}
+  .post img{max-width:100%;border-radius:8px;margin-top:8px}
+  .row{display:grid;grid-template-columns:1fr;gap:12px}
+  @media(min-width:800px){ .row{grid-template-columns:320px 1fr} .left-sticky{position:sticky;top:16px} }
+  .small{font-size:13px;color:#444}
+  .btn-red{background:#e74c3c}
+  .btn-green{background:#2ecc71}
+  .linkish{background:transparent;border:0;color:#3498db;cursor:pointer;padding:0}
+</style>
 </head>
 <body>
+<header>
+  <h1>College Doubt Portal</h1>
+  <div class="muted small">Online — Firebase powered</div>
+</header>
 
-  <button class="admin-btn" onclick="openAdminPanel()">Admin</button>
+<div id="root"></div>
 
-  <!-- Register -->
-  <div id="registerDiv" class="container">
-    <h2>Create Account</h2>
-    <input id="name" placeholder="Enter name" autocomplete="off"><br>
-    <input id="roll" placeholder="Enter roll"><br>
-    <input id="number" placeholder="Enter number"><br>
-    <input type="password" id="password" placeholder="Create password"><br>
-    <button onclick="register()">Register</button>
-  </div>
+<script type="module">
+  // ================= Firebase Imports =================
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
+  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, onSnapshot, updateDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 
-  <!-- Login -->
-  <div id="loginDiv" class="container hidden">
-    <h2>Login</h2>
-    <input id="loginName" placeholder="Enter name"><br>
-    <input type="password" id="loginPass" placeholder="Enter password"><br>
-    <button onclick="login()">Login</button>
-  </div>
+  // ================= Firebase Config =================
+  const firebaseConfig = {
+    apiKey: "AIzaSyAAs2GU9HnFuuNzD9FHFCShd5AcMjv12Lc",
+    authDomain: "college-doubt-porta.firebaseapp.com",
+    projectId: "college-doubt-porta",
+    storageBucket: "college-doubt-porta.firebasestorage.app",
+    messagingSenderId: "321480931473",
+    appId: "1:321480931473:web:b1c52d04ce1ddc40146730",
+    measurementId: "G-5SM2W0FFBM"
+  };
 
-  <!-- Post Doubt -->
-  <div id="postDiv" class="container hidden">
-    <h2>Post Doubt</h2>
-    <textarea id="doubtText" placeholder="Write your doubt..."></textarea><br>
-    <input type="file" id="imageInput" accept="image/*"><br><br>
-    <button onclick="postDoubt()">Post</button>
-    <div id="postsArea"></div>
-  </div>
+  const ADMIN_EMAIL = "amanutullah3@gmail.com"; // admin email
 
-  <!-- Admin Panel -->
-  <div class="overlay" id="overlay" onclick="closeAdminPanel()"></div>
-  <div class="admin-panel" id="adminPanel">
-    <h3>Admin Panel</h3>
-    <div id="pendingUsers"></div>
-    <button class="close-btn" onclick="closeAdminPanel()">Close</button>
-  </div>
+  // ================= Initialize Firebase =================
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-  <div class="toast" id="toast"></div>
+  const el = id => document.getElementById(id);
 
-  <script>
-    const users = [];
-    const approved = [];
-    let currentUser = null;
+  const toastEl = (() => { const d=document.createElement('div'); d.className='toast hidden'; document.body.appendChild(d); return d; })();
+  function showToast(msg, ok=true){
+    toastEl.textContent = msg;
+    toastEl.style.background = ok ? '#4caf50' : '#f44336';
+    toastEl.classList.remove('hidden');
+    setTimeout(()=> toastEl.classList.add('hidden'), 2600);
+  }
 
-    function showToast(msg, color="#4CAF50") {
-      const toast = document.getElementById('toast');
-      toast.style.background = color;
-      toast.innerText = msg;
-      toast.style.display = "block";
-      setTimeout(()=> toast.style.display="none", 2500);
+  // ================= DOMContentLoaded =================
+  window.addEventListener('DOMContentLoaded', ()=>{
+    const root = document.getElementById('root');
+    root.innerHTML = `
+      <div class="wrap">
+        <div class="row">
+          <div class="card left-sticky">
+            <div id="authArea">
+              <div id="registerForm">
+                <h3>Create Account</h3>
+                <input id="regName" placeholder="Name"/>
+                <input id="regEmail" placeholder="Email"/>
+                <input id="regRoll" placeholder="Roll"/>
+                <input id="regNumber" placeholder="Phone number"/>
+                <input id="regPass" placeholder="Password" type="password"/>
+                <button id="btnRegister">Register</button>
+                <p class="muted small">Registration will be pending until admin approves.</p>
+              </div>
+              <div id="loginForm" class="hidden">
+                <h3>Login</h3>
+                <input id="loginEmail" placeholder="Email"/>
+                <input id="loginPass" placeholder="Password" type="password"/>
+                <button id="btnLogin">Login</button>
+                <p class="muted small"><button id="btnShowRegister" class="linkish">Create new account</button></p>
+              </div>
+              <div id="postForm" class="hidden">
+                <h3>Post Doubt</h3>
+                <div class="small muted" id="currentUserInfo"></div>
+                <textarea id="doubtText" placeholder="Write your doubt..."></textarea>
+                <input id="doubtImage" type="file" accept="image/*"/>
+                <button id="btnPost">Post</button>
+                <button id="btnLogout" class="linkish">Logout</button>
+              </div>
+            </div>
+            <hr/>
+            <button id="openAdmin" class="admin-btn">Admin Panel</button>
+          </div>
+
+          <div>
+            <div class="card">
+              <h3>All Doubts</h3>
+              <div id="postsList"><p class="muted">Loading posts...</p></div>
+            </div>
+            <div class="card">
+              <h3>Info / How it works</h3>
+              <p class="muted small">
+                - Users register with email & password. Admin must approve them.<br>
+                - Once approved, users can login and post doubts.<br>
+                - Posts are visible to everyone in realtime.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div id="adminModal" class="card hidden" style="position:fixed;left:50%;top:10%;transform:translateX(-50%);z-index:999;max-width:600px;width:90%">
+          <h3>Admin Panel</h3>
+          <div id="adminArea">
+            <div id="adminLogin">
+              <p class="muted">Admin Sign-in</p>
+              <input id="adminEmail" placeholder="Admin email"/>
+              <input id="adminPass" placeholder="Admin password" type="password"/>
+              <div style="display:flex;gap:8px">
+                <button id="btnAdminLogin" class="btn-green">Sign in</button>
+                <button id="btnCloseAdmin" class="btn-red">Close</button>
+              </div>
+            </div>
+            <div id="adminPanelArea" class="hidden">
+              <p class="muted">Pending users:</p>
+              <div id="pendingList"></div>
+              <hr/>
+              <p class="muted">Approved users:</p>
+              <div id="approvedList"></div>
+              <div style="text-align:right;margin-top:8px"><button id="btnAdminSignOut" class="linkish">Sign out admin</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // ================= Element References =================
+    const regName = el('regName'), regEmail = el('regEmail'), regRoll = el('regRoll'), regNumber = el('regNumber'), regPass = el('regPass'), btnRegister = el('btnRegister');
+    const loginForm = el('loginForm'), btnShowRegister = el('btnShowRegister'), btnLogin = el('btnLogin'), loginEmail = el('loginEmail'), loginPass = el('loginPass');
+    const postForm = el('postForm'), currentUserInfo = el('currentUserInfo'), doubtText = el('doubtText'), doubtImage = el('doubtImage'), btnPost = el('btnPost'), btnLogout = el('btnLogout');
+    const postsList = el('postsList');
+    const openAdmin = el('openAdmin'), adminModal = el('adminModal'), btnCloseAdmin = el('btnCloseAdmin'), adminLogin = el('adminLogin'), adminPanelArea = el('adminPanelArea'), adminEmail = el('adminEmail'), adminPass = el('adminPass'), btnAdminLogin = el('btnAdminLogin'), pendingList = el('pendingList'), approvedList = el('approvedList'), btnAdminSignOut = el('btnAdminSignOut');
+
+    // ================= Helper =================
+    function showSection(name){
+      if(name==='register'){ el('registerForm').classList.remove('hidden'); loginForm.classList.add('hidden'); postForm.classList.add('hidden'); }
+      if(name==='login'){ el('registerForm').classList.add('hidden'); loginForm.classList.remove('hidden'); postForm.classList.add('hidden'); }
+      if(name==='post'){ el('registerForm').classList.add('hidden'); loginForm.classList.add('hidden'); postForm.classList.remove('hidden'); }
     }
 
-    function register() {
-      const name = document.getElementById("name").value.trim();
-      const roll = document.getElementById("roll").value.trim();
-      const number = document.getElementById("number").value.trim();
-      const password = document.getElementById("password").value.trim();
+    showSection('register');
 
-      if(!name || !roll || !number || !password){
-        showToast("All fields required!", "#f44336");
-        return;
-      }
+    // ================= User Register =================
+    btnRegister.addEventListener('click', async ()=>{
+      const name = regName.value.trim(), email = regEmail.value.trim(), roll = regRoll.value.trim(), number = regNumber.value.trim(), pass = regPass.value.trim();
+      if(!name||!email||!pass){ showToast('Name, email & password required', false); return; }
+      try{
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        await setDoc(doc(db,'users',cred.user.uid), { name,email,roll,number,approved:false,createdAt:serverTimestamp() });
+        showToast('Registration submitted — waiting for admin approval');
+        regName.value=''; regEmail.value=''; regRoll.value=''; regNumber.value=''; regPass.value='';
+        showSection('login');
+      }catch(err){ console.error(err); showToast('Register error: '+(err.message||err.code), false); }
+    });
 
-      users.push({name, roll, number, password});
-      showToast("Registration request sent!");
-      alert("✅ Registration Completed!\nPlease wait for admin approval.");
+    btnShowRegister.addEventListener('click', ()=> showSection('register'));
 
-      document.getElementById("name").value="";
-      document.getElementById("roll").value="";
-      document.getElementById("number").value="";
-      document.getElementById("password").value="";
-    }
+    // ================= User Login =================
+    btnLogin.addEventListener('click', async ()=>{
+      const email = loginEmail.value.trim(), pass = loginPass.value.trim();
+      if(!email||!pass){ showToast('Enter email and password', false); return; }
+      try{
+        const res = await signInWithEmailAndPassword(auth,email,pass);
+        const udoc = await getDoc(doc(db,'users',res.user.uid));
+        if(!udoc.exists() || !udoc.data().approved){ await signOut(auth); showToast('Account not approved yet', false); showSection('login'); return; }
+        showToast('Login successful');
+        loginEmail.value=''; loginPass.value='';
+      }catch(err){ console.error(err); showToast('Login failed: '+(err.message||err.code), false); }
+    });
 
-    function openAdminPanel(){
-      document.getElementById("overlay").style.display="block";
-      document.getElementById("adminPanel").style.display="block";
+    // ================= Logout =================
+    btnLogout.addEventListener('click', async ()=>{ await signOut(auth); showToast('Logged out'); showSection('login'); });
 
-      const panel = document.getElementById("pendingUsers");
-      panel.innerHTML = "";
-      if(users.length === 0){
-        panel.innerHTML = "<p>No pending users</p>";
-        return;
-      }
+    // ================= Post Doubt =================
+    btnPost.addEventListener('click', async ()=>{
+      const text = doubtText.value.trim();
+      const file = doubtImage.files[0];
+      if(!text && !file){ showToast('Write something or attach image', false); return; }
+      const user = auth.currentUser;
+      if(!user){ showToast('Please login', false); return; }
+      try{
+        let imageURL = '';
+        if(file){
+          const path = `posts/${user.uid}_${Date.now()}_${file.name}`;
+          const storageRef = sRef(storage,path);
+          await uploadBytes(storageRef, file);
+          imageURL = await getDownloadURL(storageRef);
+        }
+        const udoc = await getDoc(doc(db,'users',user.uid));
+        await addDoc(collection(db,'posts'), { authorUid:user.uid, authorName:udoc.data().name||user.email, text, imageURL, createdAt:serverTimestamp() });
+        showToast('Posted!'); doubtText.value=''; doubtImage.value='';
+       }catch(err){ console.error(err); showToast('Post error: '+(err.message||err.code), false); }
+    });
 
-      users.forEach((u,i)=>{
-        const div = document.createElement("div");
-        div.style.marginBottom = "10px";
-        div.innerHTML = `
-          <b>${u.name}</b> (Roll: ${u.roll})<br>
-          <button style="background:#2ecc71;margin-top:5px" onclick="approveUser(${i})">Approve</button>
-        `;
-        panel.appendChild(div);
+    // ================= Realtime posts listener =================
+    const listenPosts = () => {
+      const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
+      onSnapshot(q, snapshot => {
+        postsList.innerHTML = '';
+        if(snapshot.empty){ postsList.innerHTML = '<p class="muted">No doubts yet.</p>'; return; }
+        snapshot.forEach(docSnap => {
+          const p = docSnap.data();
+          const div = document.createElement('div');
+          div.className = 'post';
+          const time = p.createdAt && p.createdAt.toDate ? new Date(p.createdAt.toDate()).toLocaleString() : '';
+          div.innerHTML = `<strong>${escapeHtml(p.authorName||'Anonymous')}</strong> <span class="muted small">${time}</span>
+                           <div style="margin-top:8px">${escapeHtml(p.text||'')}</div>`;
+          if(p.imageURL){ const img = document.createElement('img'); img.src = p.imageURL; div.appendChild(img); }
+          postsList.appendChild(div);
+        });
+      }, err => {
+        console.error('Posts listen error', err);
+        postsList.innerHTML = '<p class="muted">Unable to load posts.</p>';
       });
-    }
+    };
+    listenPosts();
 
-    function approveUser(index){
-      const user = users.splice(index,1)[0];
-      approved.push(user);
-      showToast(`${user.name} approved!`);
-      document.getElementById("registerDiv").classList.add("hidden");
-      document.getElementById("loginDiv").classList.remove("hidden");
-      openAdminPanel();
-    }
+    // ================= Admin panel =================
+    openAdmin.addEventListener('click', ()=> adminModal.classList.toggle('hidden'));
+    btnCloseAdmin.addEventListener('click', ()=> adminModal.classList.add('hidden'));
 
-    function closeAdminPanel(){
-      document.getElementById("overlay").style.display="none";
-      document.getElementById("adminPanel").style.display="none";
-    }
+    btnAdminLogin.addEventListener('click', async ()=>{
+      const email = adminEmail.value.trim(), pass = adminPass.value.trim();
+      if(!email||!pass){ showToast('Enter admin credentials', false); return; }
+      try{
+        const res = await signInWithEmailAndPassword(auth,email,pass);
+        if(res.user.email !== ADMIN_EMAIL){ await signOut(auth); showToast('Not admin account', false); return; }
+        showToast('Admin signed in');
+        adminLogin.classList.add('hidden');
+        adminPanelArea.classList.remove('hidden');
+        adminEmail.value=''; adminPass.value='';
+        startPendingListener();
+      }catch(err){ console.error(err); showToast('Admin login failed: '+(err.message||err.code), false); }
+    });
 
-    function login() {
-      const name = document.getElementById("loginName").value.trim();
-      const pass = document.getElementById("loginPass").value.trim();
+    btnAdminSignOut.addEventListener('click', async ()=>{
+      await signOut(auth);
+      adminLogin.classList.remove('hidden');
+      adminPanelArea.classList.add('hidden');
+      pendingList.innerHTML=''; approvedList.innerHTML='';
+      showToast('Admin signed out');
+    });
 
-      const user = approved.find(u => u.name === name && u.password === pass);
+    // ================= Pending / Approved Users =================
+    let pendingUnsub = null, approvedUnsub = null;
+    const startPendingListener = () => {
+      const qPend = query(collection(db,'users'), where('approved','==',false));
+      pendingUnsub = onSnapshot(qPend, snap=>{
+        pendingList.innerHTML='';
+        if(snap.empty) pendingList.innerHTML='<p class="muted">No pending users</p>';
+        snap.forEach(docSnap=>{
+          const u = docSnap.data(); const id = docSnap.id;
+          const d = document.createElement('div'); d.style.marginBottom='10px';
+          d.innerHTML = `<b>${escapeHtml(u.name)}</b> (${escapeHtml(u.email)})<br>
+                         <span class="muted small">Roll: ${escapeHtml(u.roll||'')}</span><br>
+                         <div style="margin-top:6px">
+                           <button onclick="approveUser('${id}')" style="margin-right:6px" class="btn-green">Approve</button>
+                           <button onclick="deleteUser('${id}')" class="btn-red">Delete</button>
+                         </div>`;
+          pendingList.appendChild(d);
+        });
+      });
+      const qApp = query(collection(db,'users'), where('approved','==',true));
+      approvedUnsub = onSnapshot(qApp, snap=>{
+        approvedList.innerHTML='';
+        if(snap.empty) approvedList.innerHTML='<p class="muted">No approved users</p>';
+        snap.forEach(docSnap=>{
+          const u = docSnap.data(); const id = docSnap.id;
+          const d = document.createElement('div'); d.style.marginBottom='8px';
+          d.innerHTML = `<b>${escapeHtml(u.name)}</b> (${escapeHtml(u.email)}) <span class="muted small">— ${escapeHtml(u.roll||'')}</span>`;
+          approvedList.appendChild(d);
+        });
+      });
+    };
+
+    window.approveUser = async (uid)=>{
+      try{ await updateDoc(doc(db,'users',uid), {approved:true}); showToast('User approved'); }
+      catch(err){ console.error(err); showToast('Approve failed', false); }
+    };
+    window.deleteUser = async (uid)=>{
+      try{ await updateDoc(doc(db,'users',uid), {deleted:true}); showToast('User marked deleted'); }
+      catch(err){ console.error(err); showToast('Delete failed', false); }
+    };
+
+    // ================= Auth State =================
+    onAuthStateChanged(auth, async (user)=>{
       if(user){
-        currentUser = user;
-        showToast("Login successful!");
-        document.getElementById("loginDiv").classList.add("hidden");
-        document.getElementById("postDiv").classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else {
-        showToast("Invalid credentials!", "#f44336");
-      }
-    }
+        if(user.email === ADMIN_EMAIL) return;
+        try{
+          const ud = await getDoc(doc(db,'users',user.uid));
+          if(!ud.exists() || !ud.data().approved){ await signOut(auth); showToast('Account pending approval', false); showSection('login'); return; }
+          currentUserInfo.textContent = `Logged in as ${ud.data().name} (${ud.data().roll||''})`;
+          showSection('post');
+        }catch(err){ console.error(err); }
+      } else { showSection('login'); }
+    });
 
-    function postDoubt() {
-      const text = document.getElementById("doubtText").value.trim();
-      const file = document.getElementById("imageInput").files[0];
-      const postsArea = document.getElementById("postsArea");
+    // ================= Utility =================
+    function escapeHtml(s=''){ return String(s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
 
-      if(!text && !file){
-        showToast("Write something or upload an image!", "#f44336");
-        return;
-      }
-
-      const postDiv = document.createElement("div");
-      postDiv.className = "post";
-      postDiv.innerHTML = `<b>${currentUser.name}:</b><br>${text}<br>`;
-
-      if(file){
-        const reader = new FileReader();
-        reader.onload = e => {
-          const img = document.createElement("img");
-          img.src = e.target.result;
-          postDiv.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-      }
-
-      postsArea.prepend(postDiv);
-      document.getElementById("doubtText").value = "";
-      document.getElementById("imageInput").value = "";
-      showToast("Doubt posted!");
-    }
-  </script>
+  }); // DOMContentLoaded end
+</script>
 </body>
 </html>
