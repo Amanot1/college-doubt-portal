@@ -17,7 +17,6 @@
   button{background:#3498db;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
   .muted{color:#666;font-size:14px}
   .flex{display:flex;gap:8px;align-items:center}
-  .admin-btn{background:#2ecc71;color:#fff;padding:8px 12px;border-radius:8px;border:none}
   .hidden{display:none}
   .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#4caf50;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:9999}
   .post{background:#eef6ff;padding:12px;border-radius:10px;margin-bottom:10px;word-wrap:break-word}
@@ -39,297 +38,176 @@
 <div id="root"></div>
 
 <script type="module">
-  // ================= Firebase Imports =================
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-  import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-analytics.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-  import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, where, onSnapshot, updateDoc, serverTimestamp, orderBy } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-  import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
 
-  // ================= Firebase Config =================
-  const firebaseConfig = {
-    apiKey: "AIzaSyAAs2GU9HnFuuNzD9FHFCShd5AcMjv12Lc",
-    authDomain: "college-doubt-porta.firebaseapp.com",
-    projectId: "college-doubt-porta",
-    storageBucket: "college-doubt-porta.firebasestorage.app",
-    messagingSenderId: "321480931473",
-    appId: "1:321480931473:web:b1c52d04ce1ddc40146730",
-    measurementId: "G-5SM2W0FFBM"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyAAs2GU9HnFuuNzD9FHFCShd5AcMjv12Lc",
+  authDomain: "college-doubt-porta.firebaseapp.com",
+  projectId: "college-doubt-porta",
+  storageBucket: "college-doubt-porta.firebasestorage.app",
+  messagingSenderId: "321480931473",
+  appId: "1:321480931473:web:b1c52d04ce1ddc40146730",
+  measurementId: "G-5SM2W0FFBM"
+};
 
-  const ADMIN_EMAIL = "amanutullah3@gmail.com"; // admin email
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
 
-  // ================= Initialize Firebase =================
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+const el = id => document.getElementById(id);
+const toastEl = (() => { const d=document.createElement('div'); d.className='toast hidden'; document.body.appendChild(d); return d; })();
+function showToast(msg, ok=true){
+  toastEl.textContent = msg;
+  toastEl.style.background = ok ? '#4caf50' : '#f44336';
+  toastEl.classList.remove('hidden');
+  setTimeout(()=> toastEl.classList.add('hidden'), 2600);
+}
 
-  const el = id => document.getElementById(id);
-
-  const toastEl = (() => { const d=document.createElement('div'); d.className='toast hidden'; document.body.appendChild(d); return d; })();
-  function showToast(msg, ok=true){
-    toastEl.textContent = msg;
-    toastEl.style.background = ok ? '#4caf50' : '#f44336';
-    toastEl.classList.remove('hidden');
-    setTimeout(()=> toastEl.classList.add('hidden'), 2600);
-  }
-
-  // ================= DOMContentLoaded =================
-  window.addEventListener('DOMContentLoaded', ()=>{
-    const root = document.getElementById('root');
-    root.innerHTML = `
-      <div class="wrap">
-        <div class="row">
-          <div class="card left-sticky">
-            <div id="authArea">
-              <div id="registerForm">
-                <h3>Create Account</h3>
-                <input id="regName" placeholder="Name"/>
-                <input id="regEmail" placeholder="Email"/>
-                <input id="regRoll" placeholder="Roll"/>
-                <input id="regNumber" placeholder="Phone number"/>
-                <input id="regPass" placeholder="Password" type="password"/>
-                <button id="btnRegister">Register</button>
-                <p class="muted small">Registration will be pending until admin approves.</p>
-              </div>
-              <div id="loginForm" class="hidden">
-                <h3>Login</h3>
-                <input id="loginEmail" placeholder="Email"/>
-                <input id="loginPass" placeholder="Password" type="password"/>
-                <button id="btnLogin">Login</button>
-                <p class="muted small"><button id="btnShowRegister" class="linkish">Create new account</button></p>
-              </div>
-              <div id="postForm" class="hidden">
-                <h3>Post Doubt</h3>
-                <div class="small muted" id="currentUserInfo"></div>
-                <textarea id="doubtText" placeholder="Write your doubt..."></textarea>
-                <input id="doubtImage" type="file" accept="image/*"/>
-                <button id="btnPost">Post</button>
-                <button id="btnLogout" class="linkish">Logout</button>
-              </div>
+window.addEventListener('DOMContentLoaded', ()=>{
+  const root = el('root');
+  root.innerHTML = `
+    <div class="wrap">
+      <div class="row">
+        <div class="card left-sticky">
+          <div id="authArea">
+            <div id="registerForm">
+              <h3>Create Account</h3>
+              <input id="regName" placeholder="Name"/>
+              <input id="regEmail" placeholder="Email"/>
+              <input id="regRoll" placeholder="Roll"/>
+              <input id="regNumber" placeholder="Phone number"/>
+              <input id="regPass" placeholder="Password" type="password"/>
+              <button id="btnRegister">Register</button>
             </div>
-            <hr/>
-            <button id="openAdmin" class="admin-btn">Admin Panel</button>
-          </div>
-
-          <div>
-            <div class="card">
-              <h3>All Doubts</h3>
-              <div id="postsList"><p class="muted">Loading posts...</p></div>
+            <div id="loginForm" class="hidden">
+              <h3>Login</h3>
+              <input id="loginEmail" placeholder="Email"/>
+              <input id="loginPass" placeholder="Password" type="password"/>
+              <button id="btnLogin">Login</button>
+              <p class="muted small"><button id="btnShowRegister" class="linkish">Create new account</button></p>
             </div>
-            <div class="card">
-              <h3>Info / How it works</h3>
-              <p class="muted small">
-                - Users register with email & password. Admin must approve them.<br>
-                - Once approved, users can login and post doubts.<br>
-                - Posts are visible to everyone in realtime.
-              </p>
+            <div id="postForm" class="hidden">
+              <h3>Post Doubt</h3>
+              <div class="small muted" id="currentUserInfo"></div>
+              <textarea id="doubtText" placeholder="Write your doubt..."></textarea>
+              <input id="doubtImage" type="file" accept="image/*"/>
+              <button id="btnPost">Post</button>
+              <button id="btnLogout" class="linkish">Logout</button>
             </div>
           </div>
         </div>
 
-        <div id="adminModal" class="card hidden" style="position:fixed;left:50%;top:10%;transform:translateX(-50%);z-index:999;max-width:600px;width:90%">
-          <h3>Admin Panel</h3>
-          <div id="adminArea">
-            <div id="adminLogin">
-              <p class="muted">Admin Sign-in</p>
-              <input id="adminEmail" placeholder="Admin email"/>
-              <input id="adminPass" placeholder="Admin password" type="password"/>
-              <div style="display:flex;gap:8px">
-                <button id="btnAdminLogin" class="btn-green">Sign in</button>
-                <button id="btnCloseAdmin" class="btn-red">Close</button>
-              </div>
-            </div>
-            <div id="adminPanelArea" class="hidden">
-              <p class="muted">Pending users:</p>
-              <div id="pendingList"></div>
-              <hr/>
-              <p class="muted">Approved users:</p>
-              <div id="approvedList"></div>
-              <div style="text-align:right;margin-top:8px"><button id="btnAdminSignOut" class="linkish">Sign out admin</button></div>
-            </div>
+        <div>
+          <div class="card">
+            <h3>All Doubts</h3>
+            <div id="postsList"><p class="muted">Loading posts...</p></div>
           </div>
         </div>
       </div>
-    `;
+    </div>
+  `;
 
-    // ================= Element References =================
-    const regName = el('regName'), regEmail = el('regEmail'), regRoll = el('regRoll'), regNumber = el('regNumber'), regPass = el('regPass'), btnRegister = el('btnRegister');
-    const loginForm = el('loginForm'), btnShowRegister = el('btnShowRegister'), btnLogin = el('btnLogin'), loginEmail = el('loginEmail'), loginPass = el('loginPass');
-    const postForm = el('postForm'), currentUserInfo = el('currentUserInfo'), doubtText = el('doubtText'), doubtImage = el('doubtImage'), btnPost = el('btnPost'), btnLogout = el('btnLogout');
-    const postsList = el('postsList');
-    const openAdmin = el('openAdmin'), adminModal = el('adminModal'), btnCloseAdmin = el('btnCloseAdmin'), adminLogin = el('adminLogin'), adminPanelArea = el('adminPanelArea'), adminEmail = el('adminEmail'), adminPass = el('adminPass'), btnAdminLogin = el('btnAdminLogin'), pendingList = el('pendingList'), approvedList = el('approvedList'), btnAdminSignOut = el('btnAdminSignOut');
+  const regName = el('regName'), regEmail = el('regEmail'), regRoll = el('regRoll'), regNumber = el('regNumber'), regPass = el('regPass'), btnRegister = el('btnRegister');
+  const loginForm = el('loginForm'), btnShowRegister = el('btnShowRegister'), btnLogin = el('btnLogin'), loginEmail = el('loginEmail'), loginPass = el('loginPass');
+  const postForm = el('postForm'), currentUserInfo = el('currentUserInfo'), doubtText = el('doubtText'), doubtImage = el('doubtImage'), btnPost = el('btnPost'), btnLogout = el('btnLogout');
+  const postsList = el('postsList');
 
-    // ================= Helper =================
-    function showSection(name){
-      if(name==='register'){ el('registerForm').classList.remove('hidden'); loginForm.classList.add('hidden'); postForm.classList.add('hidden'); }
-      if(name==='login'){ el('registerForm').classList.add('hidden'); loginForm.classList.remove('hidden'); postForm.classList.add('hidden'); }
-      if(name==='post'){ el('registerForm').classList.add('hidden'); loginForm.classList.add('hidden'); postForm.classList.remove('hidden'); }
-    }
+  function showSection(name){
+    if(name==='register'){ el('registerForm').classList.remove('hidden'); loginForm.classList.add('hidden'); postForm.classList.add('hidden'); }
+    if(name==='login'){ el('registerForm').classList.add('hidden'); loginForm.classList.remove('hidden'); postForm.classList.add('hidden'); }
+    if(name==='post'){ el('registerForm').classList.add('hidden'); loginForm.classList.add('hidden'); postForm.classList.remove('hidden'); }
+  }
 
-    showSection('register');
+  showSection('register');
 
-    // ================= User Register =================
-    btnRegister.addEventListener('click', async ()=>{
-      const name = regName.value.trim(), email = regEmail.value.trim(), roll = regRoll.value.trim(), number = regNumber.value.trim(), pass = regPass.value.trim();
-      if(!name||!email||!pass){ showToast('Name, email & password required', false); return; }
-      try{
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        await setDoc(doc(db,'users',cred.user.uid), { name,email,roll,number,approved:false,createdAt:serverTimestamp() });
-        showToast('Registration submitted — waiting for admin approval');
-        regName.value=''; regEmail.value=''; regRoll.value=''; regNumber.value=''; regPass.value='';
-        showSection('login');
-      }catch(err){ console.error(err); showToast('Register error: '+(err.message||err.code), false); }
-    });
+  // ======= Register =======
+  btnRegister.addEventListener('click', async ()=>{
+    const name = regName.value.trim(), email = regEmail.value.trim(), roll = regRoll.value.trim(), number = regNumber.value.trim(), pass = regPass.value.trim();
+    if(!name||!email||!pass){ showToast('Name, email & password required', false); return; }
+    try{
+      const cred = await createUserWithEmailAndPassword(auth, email, pass);
+      // Immediately active (no approval)
+      await setDoc(doc(db,'users',cred.user.uid), { name,email,roll,number,approved:true,createdAt:serverTimestamp() });
+      showToast('Registration successful!');
+      regName.value=''; regEmail.value=''; regRoll.value=''; regNumber.value=''; regPass.value='';
+      showSection('login');
+    }catch(err){ console.error(err); showToast('Register error: '+(err.message||err.code), false); }
+  });
 
-    btnShowRegister.addEventListener('click', ()=> showSection('register'));
+  btnShowRegister.addEventListener('click', ()=> showSection('register'));
 
-    // ================= User Login =================
-    btnLogin.addEventListener('click', async ()=>{
-      const email = loginEmail.value.trim(), pass = loginPass.value.trim();
-      if(!email||!pass){ showToast('Enter email and password', false); return; }
-      try{
-        const res = await signInWithEmailAndPassword(auth,email,pass);
-        const udoc = await getDoc(doc(db,'users',res.user.uid));
-        if(!udoc.exists() || !udoc.data().approved){ await signOut(auth); showToast('Account not approved yet', false); showSection('login'); return; }
-        showToast('Login successful');
-        loginEmail.value=''; loginPass.value='';
-      }catch(err){ console.error(err); showToast('Login failed: '+(err.message||err.code), false); }
-    });
+  // ======= Login =======
+  btnLogin.addEventListener('click', async ()=>{
+    const email = loginEmail.value.trim(), pass = loginPass.value.trim();
+    if(!email||!pass){ showToast('Enter email and password', false); return; }
+    try{
+      const res = await signInWithEmailAndPassword(auth,email,pass);
+      showToast('Login successful');
+      loginEmail.value=''; loginPass.value='';
+    }catch(err){ console.error(err); showToast('Login failed: '+(err.message||err.code), false); }
+  });
 
-    // ================= Logout =================
-    btnLogout.addEventListener('click', async ()=>{ await signOut(auth); showToast('Logged out'); showSection('login'); });
+  // ======= Logout =======
+  btnLogout.addEventListener('click', async ()=>{ await signOut(auth); showToast('Logged out'); showSection('login'); });
 
-    // ================= Post Doubt =================
-    btnPost.addEventListener('click', async ()=>{
-      const text = doubtText.value.trim();
-      const file = doubtImage.files[0];
-      if(!text && !file){ showToast('Write something or attach image', false); return; }
-      const user = auth.currentUser;
-      if(!user){ showToast('Please login', false); return; }
-      try{
-        let imageURL = '';
-        if(file){
-          const path = `posts/${user.uid}_${Date.now()}_${file.name}`;
-          const storageRef = sRef(storage,path);
-          await uploadBytes(storageRef, file);
-          imageURL = await getDownloadURL(storageRef);
-        }
-        const udoc = await getDoc(doc(db,'users',user.uid));
-        await addDoc(collection(db,'posts'), { authorUid:user.uid, authorName:udoc.data().name||user.email, text, imageURL, createdAt:serverTimestamp() });
-        showToast('Posted!'); doubtText.value=''; doubtImage.value='';
-       }catch(err){ console.error(err); showToast('Post error: '+(err.message||err.code), false); }
-    });
+  // ======= Post Doubt =======
+  btnPost.addEventListener('click', async ()=>{
+    const text = doubtText.value.trim();
+    const file = doubtImage.files[0];
+    const user = auth.currentUser;
+    if(!user){ showToast('Please login', false); return; }
+    if(!text && !file){ showToast('Write something or attach image', false); return; }
+    try{
+      let imageURL = '';
+      if(file){
+        const path = `posts/${user.uid}_${Date.now()}_${file.name}`;
+        const storageRef = sRef(storage,path);
+        await uploadBytes(storageRef, file);
+        imageURL = await getDownloadURL(storageRef);
+      }
+      const udoc = await getDoc(doc(db,'users',user.uid));
+      await addDoc(collection(db,'posts'), { authorUid:user.uid, authorName:udoc.data().name||user.email, text, imageURL, createdAt:serverTimestamp() });
+      showToast('Posted!'); doubtText.value=''; doubtImage.value='';
+    }catch(err){ console.error(err); showToast('Post error: '+(err.message||err.code), false); }
+  });
 
-    // ================= Realtime posts listener =================
-    const listenPosts = () => {
-      const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
-      onSnapshot(q, snapshot => {
-        postsList.innerHTML = '';
-        if(snapshot.empty){ postsList.innerHTML = '<p class="muted">No doubts yet.</p>'; return; }
-        snapshot.forEach(docSnap => {
-          const p = docSnap.data();
-          const div = document.createElement('div');
-          div.className = 'post';
-          const time = p.createdAt && p.createdAt.toDate ? new Date(p.createdAt.toDate()).toLocaleString() : '';
-          div.innerHTML = `<strong>${escapeHtml(p.authorName||'Anonymous')}</strong> <span class="muted small">${time}</span>
-                           <div style="margin-top:8px">${escapeHtml(p.text||'')}</div>`;
-          if(p.imageURL){ const img = document.createElement('img'); img.src = p.imageURL; div.appendChild(img); }
-          postsList.appendChild(div);
-        });
-      }, err => {
-        console.error('Posts listen error', err);
-        postsList.innerHTML = '<p class="muted">Unable to load posts.</p>';
+  // ======= Realtime posts =======
+  const listenPosts = () => {
+    const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
+    onSnapshot(q, snapshot => {
+      postsList.innerHTML = '';
+      if(snapshot.empty){ postsList.innerHTML = '<p class="muted">No doubts yet.</p>'; return; }
+      snapshot.forEach(docSnap => {
+        const p = docSnap.data();
+        const div = document.createElement('div');
+        div.className = 'post';
+        const time = p.createdAt && p.createdAt.toDate ? new Date(p.createdAt.toDate()).toLocaleString() : '';
+        div.innerHTML = `<strong>${escapeHtml(p.authorName||'Anonymous')}</strong> <span class="muted small">${time}</span>
+                         <div style="margin-top:8px">${escapeHtml(p.text||'')}</div>`;
+        if(p.imageURL){ const img = document.createElement('img'); img.src = p.imageURL; div.appendChild(img); }
+        postsList.appendChild(div);
       });
-    };
-    listenPosts();
+    });
+  };
+  listenPosts();
 
-    // ================= Admin panel =================
-    openAdmin.addEventListener('click', ()=> adminModal.classList.toggle('hidden'));
-    btnCloseAdmin.addEventListener('click', ()=> adminModal.classList.add('hidden'));
-
-    btnAdminLogin.addEventListener('click', async ()=>{
-      const email = adminEmail.value.trim(), pass = adminPass.value.trim();
-      if(!email||!pass){ showToast('Enter admin credentials', false); return; }
+  // ======= Auth State =======
+  onAuthStateChanged(auth, async (user)=>{
+    if(user){
       try{
-        const res = await signInWithEmailAndPassword(auth,email,pass);
-        if(res.user.email !== ADMIN_EMAIL){ await signOut(auth); showToast('Not admin account', false); return; }
-        showToast('Admin signed in');
-        adminLogin.classList.add('hidden');
-        adminPanelArea.classList.remove('hidden');
-        adminEmail.value=''; adminPass.value='';
-        startPendingListener();
-      }catch(err){ console.error(err); showToast('Admin login failed: '+(err.message||err.code), false); }
-    });
+        const ud = await getDoc(doc(db,'users',user.uid));
+        currentUserInfo.textContent = `Logged in as ${ud.data().name} (${ud.data().roll||''})`;
+        showSection('post');
+      }catch(err){ console.error(err); }
+    } else { showSection('login'); }
+  });
 
-    btnAdminSignOut.addEventListener('click', async ()=>{
-      await signOut(auth);
-      adminLogin.classList.remove('hidden');
-      adminPanelArea.classList.add('hidden');
-      pendingList.innerHTML=''; approvedList.innerHTML='';
-      showToast('Admin signed out');
-    });
-
-    // ================= Pending / Approved Users =================
-    let pendingUnsub = null, approvedUnsub = null;
-    const startPendingListener = () => {
-      const qPend = query(collection(db,'users'), where('approved','==',false));
-      pendingUnsub = onSnapshot(qPend, snap=>{
-        pendingList.innerHTML='';
-        if(snap.empty) pendingList.innerHTML='<p class="muted">No pending users</p>';
-        snap.forEach(docSnap=>{
-          const u = docSnap.data(); const id = docSnap.id;
-          const d = document.createElement('div'); d.style.marginBottom='10px';
-          d.innerHTML = `<b>${escapeHtml(u.name)}</b> (${escapeHtml(u.email)})<br>
-                         <span class="muted small">Roll: ${escapeHtml(u.roll||'')}</span><br>
-                         <div style="margin-top:6px">
-                           <button onclick="approveUser('${id}')" style="margin-right:6px" class="btn-green">Approve</button>
-                           <button onclick="deleteUser('${id}')" class="btn-red">Delete</button>
-                         </div>`;
-          pendingList.appendChild(d);
-        });
-      });
-      const qApp = query(collection(db,'users'), where('approved','==',true));
-      approvedUnsub = onSnapshot(qApp, snap=>{
-        approvedList.innerHTML='';
-        if(snap.empty) approvedList.innerHTML='<p class="muted">No approved users</p>';
-        snap.forEach(docSnap=>{
-          const u = docSnap.data(); const id = docSnap.id;
-          const d = document.createElement('div'); d.style.marginBottom='8px';
-          d.innerHTML = `<b>${escapeHtml(u.name)}</b> (${escapeHtml(u.email)}) <span class="muted small">— ${escapeHtml(u.roll||'')}</span>`;
-          approvedList.appendChild(d);
-        });
-      });
-    };
-
-    window.approveUser = async (uid)=>{
-      try{ await updateDoc(doc(db,'users',uid), {approved:true}); showToast('User approved'); }
-      catch(err){ console.error(err); showToast('Approve failed', false); }
-    };
-    window.deleteUser = async (uid)=>{
-      try{ await updateDoc(doc(db,'users',uid), {deleted:true}); showToast('User marked deleted'); }
-      catch(err){ console.error(err); showToast('Delete failed', false); }
-    };
-
-    // ================= Auth State =================
-    onAuthStateChanged(auth, async (user)=>{
-      if(user){
-        if(user.email === ADMIN_EMAIL) return;
-        try{
-          const ud = await getDoc(doc(db,'users',user.uid));
-          if(!ud.exists() || !ud.data().approved){ await signOut(auth); showToast('Account pending approval', false); showSection('login'); return; }
-          currentUserInfo.textContent = `Logged in as ${ud.data().name} (${ud.data().roll||''})`;
-          showSection('post');
-        }catch(err){ console.error(err); }
-      } else { showSection('login'); }
-    });
-
-    // ================= Utility =================
-    function escapeHtml(s=''){ return String(s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
-
-  }); // DOMContentLoaded end
+  function escapeHtml(s=''){ return String(s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
+});
 </script>
 </body>
 </html>
