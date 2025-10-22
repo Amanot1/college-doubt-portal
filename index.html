@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>College Doubt Portal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Poppins", Arial, sans-serif;
+      background: #f5f6fa;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      background: white;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      margin: 50px auto;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #ccc;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    textarea {
+      resize: none;
+      height: 100px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #3498db;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    button:hover { background: #2980b9; }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4CAF50;
+      color: white;
+      padding: 14px 22px;
+      border-radius: 6px;
+      display: none;
+      font-size: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      z-index: 2000;
+    }
+
+    .hidden { display: none; }
+
+    .post {
+      background: #e8f0fe;
+      padding: 10px;
+      border-radius: 10px;
+      margin: 10px 0;
+      text-align: left;
+      word-wrap: break-word;
+    }
+
+    .admin-btn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 500;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      z-index: 2001;
+    }
+
+    .admin-btn:active {
+      transform: scale(0.95);
+    }
+
+    .admin-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      width: 90%;
+      max-width: 450px;
+      border-radius: 12px;
+      box-shadow: 0 0 10px #555;
+      padding: 20px;
+      display: none;
+      z-index: 2001;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .admin-panel h3 { margin-top: 0; }
+
+    .close-btn {
+      background: #e74c3c;
+      margin-top: 10px;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      z-index: 2000;
+    }
+
+    img {
+      margin-top: 5px;
+      width: 100%;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .container { 
+        margin: 20px auto; 
+        padding: 16px; 
+        width: 95%;
+      }
+      button, input, textarea { font-size: 15px; }
+      .admin-btn { font-size: 13px; padding: 8px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="admin-btn" onclick="openAdminPanel()">Admin</button>
+
+  <!-- Register -->
+  <div id="registerDiv" class="container">
+    <h2>Create Account</h2>
+    <input id="name" placeholder="Enter name" autocomplete="off"><br>
+    <input id="roll" placeholder="Enter roll"><br>
+    <input id="number" placeholder="Enter number"><br>
+    <input type="password" id="password" placeholder="Create password"><br>
+    <button onclick="register()">Register</button>
+  </div>
+
+  <!-- Login -->
+  <div id="loginDiv" class="container hidden">
+    <h2>Login</h2>
+    <input id="loginName" placeholder="Enter name"><br>
+    <input type="password" id="loginPass" placeholder="Enter password"><br>
+    <button onclick="login()">Login</button>
+  </div>
+
+  <!-- Post Doubt -->
+  <div id="postDiv" class="container hidden">
+    <h2>Post Doubt</h2>
+    <textarea id="doubtText" placeholder="Write your doubt..."></textarea><br>
+    <input type="file" id="imageInput" accept="image/*"><br><br>
+    <button onclick="postDoubt()">Post</button>
+    <div id="postsArea"></div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div class="overlay" id="overlay" onclick="closeAdminPanel()"></div>
+  <div class="admin-panel" id="adminPanel">
+    <h3>Admin Panel</h3>
+    <div id="pendingUsers"></div>
+    <button class="close-btn" onclick="closeAdminPanel()">Close</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const users = [];
+    const approved = [];
+    let currentUser = null;
+
+    function showToast(msg, color="#4CAF50") {
+      const toast = document.getElementById('toast');
+      toast.style.background = color;
+      toast.innerText = msg;
+      toast.style.display = "block";
+      setTimeout(()=> toast.style.display="none", 2500);
+    }
+
+    function register() {
+      const name = document.getElementById("name").value.trim();
+      const roll = document.getElementById("roll").value.trim();
+      const number = document.getElementById("number").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      if(!name || !roll || !number || !password){
+        showToast("All fields required!", "#f44336");
+        return;
+      }
+
+      users.push({name, roll, number, password});
+      showToast("Registration request sent!");
+      alert("✅ Registration Completed!\nPlease wait for admin approval.");
+
+      document.getElementById("name").value="";
+      document.getElementById("roll").value="";
+      document.getElementById("number").value="";
+      document.getElementById("password").value="";
+    }
+
+    function openAdminPanel(){
+      document.getElementById("overlay").style.display="block";
+      document.getElementById("adminPanel").style.display="block";
+
+      const panel = document.getElementById("pendingUsers");
+      panel.innerHTML = "";
+      if(users.length === 0){
+        panel.innerHTML = "<p>No pending users</p>";
+        return;
+      }
+
+      users.forEach((u,i)=>{
+        const div = document.createElement("div");
+        div.style.marginBottom = "10px";
+        div.innerHTML = `
+          <b>${u.name}</b> (Roll: ${u.roll})<br>
+          <button style="background:#2ecc71;margin-top:5px" onclick="approveUser(${i})">Approve</button>
+        `;
+        panel.appendChild(div);
+      });
+    }
+
+    function approveUser(index){
+      const user = users.splice(index,1)[0];
+      approved.push(user);
+      showToast(`${user.name} approved!`);
+      document.getElementById("registerDiv").classList.add("hidden");
+      document.getElementById("loginDiv").classList.remove("hidden");
+      openAdminPanel();
+    }
+
+    function closeAdminPanel(){
+      document.getElementById("overlay").style.display="none";
+      document.getElementById("adminPanel").style.display="none";
+    }
+
+    function login() {
+      const name = document.getElementById("loginName").value.trim();
+      const pass = document.getElementById("loginPass").value.trim();
+
+      const user = approved.find(u => u.name === name && u.password === pass);
+      if(user){
+        currentUser = user;
+        showToast("Login successful!");
+        document.getElementById("loginDiv").classList.add("hidden");
+        document.getElementById("postDiv").classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        showToast("Invalid credentials!", "#f44336");
+      }
+    }
+
+    function postDoubt() {
+      const text = document.getElementById("doubtText").value.trim();
+      const file = document.getElementById("imageInput").files[0];
+      const postsArea = document.getElementById("postsArea");
+
+      if(!text && !file){
+        showToast("Write something or upload an image!", "#f44336");
+        return;
+      }
+
+      const postDiv = document.createElement("div");
+      postDiv.className = "post";
+      postDiv.innerHTML = `<b>${currentUser.name}:</b><br>${text}<br>`;
+
+      if(file){
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement("img");
+          img.src = e.target.result;
+          postDiv.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      }
+
+      postsArea.prepend(postDiv);
+      document.getElementById("doubtText").value = "";
+      document.getElementById("imageInput").value = "";
+      showToast("Doubt posted!");
+    }
+  </script>
+</body>
+</html>
