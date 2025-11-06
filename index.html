@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>বেসিক ইলেকট্রনিক্স</title>
+  <title>২য় সেমিস্টার ক্লাস</title>
   <style>
     body {
       font-family: "Noto Sans Bengali", sans-serif;
@@ -168,3 +168,63 @@
 
 </body>
 </html>
+    <li><a href="#" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১০ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১১তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১২তম অধ্যায়</a></li>
+  </ul>
+
+  <!-- রসায়ন -->
+  <button id="chemButton">রসায়ন</button>
+  <ul id="chemList">
+    <!-- ১ থেকে ১৫ অধ্যায় -->
+    <li><a href="#" target="_blank">১ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">২য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৩য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৪র্থ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৫ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৬ষ্ঠ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৭ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৮ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১০ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১১তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১২তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৩তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৪তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৫তম অধ্যায়</a></li>
+  </ul>
+
+  <script>
+    // বেসিক ইলেকট্রনিক্স
+    const button = document.getElementById('toggleButton');
+    const chapterList = document.getElementById('chapterList');
+    button.addEventListener('click', () => {
+      chapterList.style.display = chapterList.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // ম্যাথ ২
+    const mathButton = document.getElementById('mathButton');
+    const mathList = document.getElementById('mathList');
+    mathButton.addEventListener('click', () => {
+      mathList.style.display = mathList.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // পাইথন
+    const pythonButton = document.getElementById('pythonButton');
+    const pythonList = document.getElementById('pythonList');
+    pythonButton.addEventListener('click', () => {
+      pythonList.style.display = pythonList.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // রসায়ন
+    const chemButton = document.getElementById('chemButton');
+    const chemList = document.getElementById('chemList');
+    chemButton.addEventListener('click', () => {
+      chemList.style.display = chemList.style.display === 'block' ? 'none' : 'block';
+    });
+  </script>
+
+</body>
+</html>
+
