@@ -1,213 +1,170 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>College Doubt Portal (Firebase)</title>
-<style>
-  *{box-sizing:border-box}
-  body{font-family:Arial, Helvetica, sans-serif;margin:0;background:#f5f6fa;color:#222}
-  header{padding:12px 16px;background:#fff;border-bottom:1px solid #e6e6e6;display:flex;align-items:center;justify-content:space-between}
-  header h1{font-size:18px;margin:0}
-  .wrap{padding:18px;max-width:900px;margin:0 auto}
-  .card{background:#fff;padding:16px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.04);margin-bottom:16px}
-  input,textarea,button{font-size:15px}
-  input,textarea{width:100%;padding:10px;margin:8px 0;border:1px solid #dcdcdc;border-radius:8px}
-  textarea{min-height:90px;resize:vertical}
-  button{background:#3498db;color:#fff;border:none;padding:10px 14px;border-radius:8px;cursor:pointer}
-  .muted{color:#666;font-size:14px}
-  .flex{display:flex;gap:8px;align-items:center}
-  .hidden{display:none}
-  .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:20px;background:#4caf50;color:#fff;padding:12px 18px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.12);z-index:9999}
-  .post{background:#eef6ff;padding:12px;border-radius:10px;margin-bottom:10px;word-wrap:break-word}
-  .post img{max-width:100%;border-radius:8px;margin-top:8px}
-  .row{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:800px){ .row{grid-template-columns:320px 1fr} .left-sticky{position:sticky;top:16px} }
-  .small{font-size:13px;color:#444}
-  .btn-red{background:#e74c3c}
-  .btn-green{background:#2ecc71}
-  .linkish{background:transparent;border:0;color:#3498db;cursor:pointer;padding:0}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>বেসিক ইলেকট্রনিক্স</title>
+  <style>
+    body {
+      font-family: "Noto Sans Bengali", sans-serif;
+      background-color: #f4f7fb;
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      padding: 12px 24px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      margin: 10px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+      display: none;
+    }
+
+    ul li {
+      background: #ffffff;
+      margin: 8px auto;
+      width: 250px;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    ul li a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+
+    ul li a:hover {
+      color: #0056b3;
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>College Doubt Portal</h1>
-  <div class="muted small">Online — Firebase powered</div>
-</header>
 
-<div id="root"></div>
+  <h2>📘 শিক্ষামূলক ওয়েব পৃষ্ঠা</h2>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.4.0/firebase-storage.js";
+  <!-- বেসিক ইলেকট্রনিক্স -->
+  <button id="toggleButton">বেসিক ইলেকট্রনিক্স</button>
+  <ul id="chapterList">
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DQ4fXpNg90Do" target="_blank">১ম অধ্যায় (part-1)</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DFq0dzu5oATU" target="_blank">১ম অধ্যায় (part-2)</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DZ_g70Nd0PzE" target="_blank">২য় অধ্যায়</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Dx0bagOCVSCY" target="_blank">৩য় অধ্যায়</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DvuyzOAjZiIw" target="_blank">৪র্থ অধ্যায়</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3D4P-Z8oZttZE" target="_blank">৫ম অধ্যায় (part-1)</a></li>
+    <li><a href="https://l.facebook.com/l.php?u=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3DiJa5rrC3HyU" target="_blank">৫ম অধ্যায় (part-2)</a></li>
+    <li><a href="https://example.com/chapter6" target="_blank">৬ষ্ঠ অধ্যায়</a></li>
+    <li><a href="https://example.com/chapter7" target="_blank">৭ম অধ্যায়</a></li>
+    <li><a href="https://example.com/chapter8" target="_blank">৮ম অধ্যায়</a></li>
+    <li><a href="https://example.com/chapter9" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="https://example.com/chapter10" target="_blank">১০ম অধ্যায়</a></li>
+  </ul>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAAs2GU9HnFuuNzD9FHFCShd5AcMjv12Lc",
-  authDomain: "college-doubt-porta.firebaseapp.com",
-  projectId: "college-doubt-porta",
-  storageBucket: "college-doubt-porta.firebasestorage.app",
-  messagingSenderId: "321480931473",
-  appId: "1:321480931473:web:b1c52d04ce1ddc40146730",
-  measurementId: "G-5SM2W0FFBM"
-};
+  <!-- ম্যাথ ২ -->
+  <button id="mathButton">ম্যাথ ২</button>
+  <ul id="mathList">
+    <!-- ১ থেকে ১৫ অধ্যায় -->
+    <li><a href="#" target="_blank">১ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">২য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৩য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৪র্থ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৫ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৬ষ্ঠ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৭ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৮ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১০ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১১তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১২তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৩তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৪তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৫তম অধ্যায়</a></li>
+  </ul>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const storage = getStorage(app);
+  <!-- পাইথন -->
+  <button id="pythonButton">পাইথন</button>
+  <ul id="pythonList">
+    <!-- ১ থেকে ১২ অধ্যায় -->
+    <li><a href="#" target="_blank">১ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">২য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৩য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৪র্থ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৫ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৬ষ্ঠ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৭ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৮ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১০ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১১তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১২তম অধ্যায়</a></li>
+  </ul>
 
-const el = id => document.getElementById(id);
-const toastEl = (() => { const d=document.createElement('div'); d.className='toast hidden'; document.body.appendChild(d); return d; })();
-function showToast(msg, ok=true){
-  toastEl.textContent = msg;
-  toastEl.style.background = ok ? '#4caf50' : '#f44336';
-  toastEl.classList.remove('hidden');
-  setTimeout(()=> toastEl.classList.add('hidden'), 2600);
-}
+  <!-- রসায়ন -->
+  <button id="chemButton">রসায়ন</button>
+  <ul id="chemList">
+    <!-- ১ থেকে ১৫ অধ্যায় -->
+    <li><a href="#" target="_blank">১ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">২য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৩য় অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৪র্থ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৫ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৬ষ্ঠ অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৭ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৮ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">৯ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১০ম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১১তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১২তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৩তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৪তম অধ্যায়</a></li>
+    <li><a href="#" target="_blank">১৫তম অধ্যায়</a></li>
+  </ul>
 
-window.addEventListener('DOMContentLoaded', ()=>{
-  const root = el('root');
-  root.innerHTML = `
-    <div class="wrap">
-      <div class="row">
-        <div class="card left-sticky">
-          <div id="authArea">
-            <div id="registerForm">
-              <h3>Create Account</h3>
-              <input id="regName" placeholder="Name"/>
-              <input id="regEmail" placeholder="Email"/>
-              <input id="regRoll" placeholder="Roll"/>
-              <input id="regNumber" placeholder="Phone number"/>
-              <input id="regPass" placeholder="Password" type="password"/>
-              <button id="btnRegister">Register</button>
-            </div>
-            <div id="loginForm" class="hidden">
-              <h3>Login</h3>
-              <input id="loginEmail" placeholder="Email"/>
-              <input id="loginPass" placeholder="Password" type="password"/>
-              <button id="btnLogin">Login</button>
-              <p class="muted small"><button id="btnShowRegister" class="linkish">Create new account</button></p>
-            </div>
-            <div id="postForm" class="hidden">
-              <h3>Post Doubt</h3>
-              <div class="small muted" id="currentUserInfo"></div>
-              <textarea id="doubtText" placeholder="Write your doubt..."></textarea>
-              <input id="doubtImage" type="file" accept="image/*"/>
-              <button id="btnPost">Post</button>
-              <button id="btnLogout" class="linkish">Logout</button>
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="card">
-            <h3>All Doubts</h3>
-            <div id="postsList"><p class="muted">Loading posts...</p></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-
-  const regName = el('regName'), regEmail = el('regEmail'), regRoll = el('regRoll'), regNumber = el('regNumber'), regPass = el('regPass'), btnRegister = el('btnRegister');
-  const loginForm = el('loginForm'), btnShowRegister = el('btnShowRegister'), btnLogin = el('btnLogin'), loginEmail = el('loginEmail'), loginPass = el('loginPass');
-  const postForm = el('postForm'), currentUserInfo = el('currentUserInfo'), doubtText = el('doubtText'), doubtImage = el('doubtImage'), btnPost = el('btnPost'), btnLogout = el('btnLogout');
-  const postsList = el('postsList');
-
-  function showSection(name){
-    if(name==='register'){ el('registerForm').classList.remove('hidden'); loginForm.classList.add('hidden'); postForm.classList.add('hidden'); }
-    if(name==='login'){ el('registerForm').classList.add('hidden'); loginForm.classList.remove('hidden'); postForm.classList.add('hidden'); }
-    if(name==='post'){ el('registerForm').classList.add('hidden'); loginForm.classList.add('hidden'); postForm.classList.remove('hidden'); }
-  }
-
-  showSection('register');
-
-  // ======= Register =======
-  btnRegister.addEventListener('click', async ()=>{
-    const name = regName.value.trim(), email = regEmail.value.trim(), roll = regRoll.value.trim(), number = regNumber.value.trim(), pass = regPass.value.trim();
-    if(!name||!email||!pass){ showToast('Name, email & password required', false); return; }
-    try{
-      const cred = await createUserWithEmailAndPassword(auth, email, pass);
-      // Immediately active (no approval)
-      await setDoc(doc(db,'users',cred.user.uid), { name,email,roll,number,approved:true,createdAt:serverTimestamp() });
-      showToast('Registration successful!');
-      regName.value=''; regEmail.value=''; regRoll.value=''; regNumber.value=''; regPass.value='';
-      showSection('login');
-    }catch(err){ console.error(err); showToast('Register error: '+(err.message||err.code), false); }
-  });
-
-  btnShowRegister.addEventListener('click', ()=> showSection('register'));
-
-  // ======= Login =======
-  btnLogin.addEventListener('click', async ()=>{
-    const email = loginEmail.value.trim(), pass = loginPass.value.trim();
-    if(!email||!pass){ showToast('Enter email and password', false); return; }
-    try{
-      const res = await signInWithEmailAndPassword(auth,email,pass);
-      showToast('Login successful');
-      loginEmail.value=''; loginPass.value='';
-    }catch(err){ console.error(err); showToast('Login failed: '+(err.message||err.code), false); }
-  });
-
-  // ======= Logout =======
-  btnLogout.addEventListener('click', async ()=>{ await signOut(auth); showToast('Logged out'); showSection('login'); });
-
-  // ======= Post Doubt =======
-  btnPost.addEventListener('click', async ()=>{
-    const text = doubtText.value.trim();
-    const file = doubtImage.files[0];
-    const user = auth.currentUser;
-    if(!user){ showToast('Please login', false); return; }
-    if(!text && !file){ showToast('Write something or attach image', false); return; }
-    try{
-      let imageURL = '';
-      if(file){
-        const path = `posts/${user.uid}_${Date.now()}_${file.name}`;
-        const storageRef = sRef(storage,path);
-        await uploadBytes(storageRef, file);
-        imageURL = await getDownloadURL(storageRef);
-      }
-      const udoc = await getDoc(doc(db,'users',user.uid));
-      await addDoc(collection(db,'posts'), { authorUid:user.uid, authorName:udoc.data().name||user.email, text, imageURL, createdAt:serverTimestamp() });
-      showToast('Posted!'); doubtText.value=''; doubtImage.value='';
-    }catch(err){ console.error(err); showToast('Post error: '+(err.message||err.code), false); }
-  });
-
-  // ======= Realtime posts =======
-  const listenPosts = () => {
-    const q = query(collection(db,'posts'), orderBy('createdAt','desc'));
-    onSnapshot(q, snapshot => {
-      postsList.innerHTML = '';
-      if(snapshot.empty){ postsList.innerHTML = '<p class="muted">No doubts yet.</p>'; return; }
-      snapshot.forEach(docSnap => {
-        const p = docSnap.data();
-        const div = document.createElement('div');
-        div.className = 'post';
-        const time = p.createdAt && p.createdAt.toDate ? new Date(p.createdAt.toDate()).toLocaleString() : '';
-        div.innerHTML = `<strong>${escapeHtml(p.authorName||'Anonymous')}</strong> <span class="muted small">${time}</span>
-                         <div style="margin-top:8px">${escapeHtml(p.text||'')}</div>`;
-        if(p.imageURL){ const img = document.createElement('img'); img.src = p.imageURL; div.appendChild(img); }
-        postsList.appendChild(div);
-      });
+  <script>
+    // বেসিক ইলেকট্রনিক্স
+    const button = document.getElementById('toggleButton');
+    const chapterList = document.getElementById('chapterList');
+    button.addEventListener('click', () => {
+      chapterList.style.display = chapterList.style.display === 'block' ? 'none' : 'block';
     });
-  };
-  listenPosts();
 
-  // ======= Auth State =======
-  onAuthStateChanged(auth, async (user)=>{
-    if(user){
-      try{
-        const ud = await getDoc(doc(db,'users',user.uid));
-        currentUserInfo.textContent = `Logged in as ${ud.data().name} (${ud.data().roll||''})`;
-        showSection('post');
-      }catch(err){ console.error(err); }
-    } else { showSection('login'); }
-  });
+    // ম্যাথ ২
+    const mathButton = document.getElementById('mathButton');
+    const mathList = document.getElementById('mathList');
+    mathButton.addEventListener('click', () => {
+      mathList.style.display = mathList.style.display === 'block' ? 'none' : 'block';
+    });
 
-  function escapeHtml(s=''){ return String(s).replace(/[&<>"]/g, c=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c])); }
-});
-</script>
+    // পাইথন
+    const pythonButton = document.getElementById('pythonButton');
+    const pythonList = document.getElementById('pythonList');
+    pythonButton.addEventListener('click', () => {
+      pythonList.style.display = pythonList.style.display === 'block' ? 'none' : 'block';
+    });
+
+    // রসায়ন
+    const chemButton = document.getElementById('chemButton');
+    const chemList = document.getElementById('chemList');
+    chemButton.addEventListener('click', () => {
+      chemList.style.display = chemList.style.display === 'block' ? 'none' : 'block';
+    });
+  </script>
+
 </body>
 </html>
